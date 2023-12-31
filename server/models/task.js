@@ -6,6 +6,13 @@ var STATUSES=['todo','in-progress','completed'];
 function validateStatus(status){
   return STATUSES.includes(status);
 }
+function checkInvalid(data){
+  if(data.status){
+    if(!validateStatus(data.status))return "Invalid status";
+  }
+  if(Object.keys(data).length === 0)return "Empty data";
+  return 0;
+}
 
 function getJsonQuery(searchParams){//title, status, dueDateLower, dueDateUpper
   var params=[];
@@ -28,9 +35,10 @@ function stripUndefined(object){
   });
 }
 
-function createNewTask(Task, title, description, status, dueDate, callback){
-  if(!validateStatus(status))return callback("Status invalid");
-  Task.create( {title, description, status, dueDate}, (error, newTask)=>{
+//Create
+function createNewTask(Task, newData, callback){
+  if(checkInvalid(newData))return callback(checkInvalid(newData));
+  Task.create( newData, (error, newTask)=>{
     if(error){
       return callback(error);
     }
@@ -38,7 +46,7 @@ function createNewTask(Task, title, description, status, dueDate, callback){
   });
 }
 
-
+//Read
 function getById(Task, taskID, callback){
   Task.findById( taskID, function (err, instance) {
       if(!instance){
@@ -57,9 +65,10 @@ function searchTasks(Task, searchParams, callback){
   });
 }
 
-
+//Update
 function updateById(Task, taskID, updateParams, callback){
   stripUndefined(updateParams);
+  if(checkInvalid(updateParams))return callback(checkInvalid(updateParams));
   Task.updateAll({id:taskID}, updateParams, (err,res)=>{
     if(err)callback(err);
     else callback(null,1);
@@ -69,7 +78,19 @@ function updateById(Task, taskID, updateParams, callback){
 function updateMany(Task, searchParams, updateParams, callback){
   var query = getJsonQuery(searchParams);
   stripUndefined(updateParams);
+  if(checkInvalid(updateParams))return callback(checkInvalid(updateParams));
   Task.updateAll(query.where, updateParams, (err,res)=>{
+    if(err)callback(err);
+    else callback(null,res.count);
+  });
+}
+
+
+//Delete
+
+function deleteMany(Task, searchParams, callback){
+  var query = getJsonQuery(searchParams);
+  Task.destroyAll(query.where, (err,res)=>{
     if(err)callback(err);
     else callback(null,res.count);
   });
@@ -77,7 +98,7 @@ function updateMany(Task, searchParams, updateParams, callback){
 
 module.exports = function(Task) {
   //Create
-  Task.create_new = (title,description,status,dueDate,cb) => {createNewTask(Task,title,description,status,dueDate,cb)}
+  Task.create_new = (title,description,status,dueDate,cb) => {createNewTask(Task,{title,description,status,dueDate},cb)};
   Task.remoteMethod(
     'create_new', {
       http: {path: '/create',verb: 'post'},
@@ -92,7 +113,7 @@ module.exports = function(Task) {
   );
 
   //Read
-  Task.getById = (id,cb) => {getById(Task,id,cb)}
+  Task.getById = (id,cb) => {getById(Task,id,cb)};
   Task.remoteMethod(
     'getById', {
       http: {path: '/get-by-id', verb: 'get'},
@@ -101,7 +122,7 @@ module.exports = function(Task) {
     }
   );
 
-  Task.search = (title,status,dueDateLower,dueDateUpper,cb) => {searchTasks(Task,{title,status,dueDateLower,dueDateUpper},cb)}
+  Task.search = (title,status,dueDateLower,dueDateUpper,cb) => {searchTasks(Task,{title,status,dueDateLower,dueDateUpper},cb)};
   Task.remoteMethod(
     'search', {
       http: {path: '/search', verb: 'get'},
@@ -116,10 +137,10 @@ module.exports = function(Task) {
   );
 
   //Update
-  Task.updateById = (id, title,description,status,dueDate,cb) => {updateById(Task,id,{title,description,status,dueDate},cb)}
+  Task.updateById = (id, title,description,status,dueDate,cb) => {updateById(Task,id,{title,description,status,dueDate},cb)};
   Task.remoteMethod(
     'updateById', {
-      http: {path: '/update-by-id', verb: 'get'},//TODO: change to post
+      http: {path: '/update-by-id', verb: 'post'},
       accepts: [
         {arg: 'id', type: 'string', required: true},
         {arg: 'title', type: 'string'},
@@ -136,7 +157,7 @@ module.exports = function(Task) {
   }
   Task.remoteMethod(
     'updateMany', {
-      http: {path: '/update-many', verb: 'get'},
+      http: {path: '/update-many', verb: 'post'},
       accepts: [
         {arg: 'title', type: 'string'},
         {arg: 'status', type: 'string'},
@@ -147,13 +168,31 @@ module.exports = function(Task) {
         {arg: 'newStatus', type: 'string'},
         {arg: 'newDueDate', type: 'date'},
       ],
-      returns: {arg: 'success', type: 'number'}
+      returns: {arg: 'count', type: 'number'}
     }
   );
 
   //Delete
+  Task.remoteMethod(//implemented by default
+    'deleteById', {
+      http: {path: '/delete-by-id', verb: 'post'},
+      accepts: [
+        {arg: 'id', type: 'string', required: true},
+      ],
+      returns: {arg: 'response', type: 'json'}
+    }
+  );
+  Task.deleteMany = (title,status,dueDateLower,dueDateUpper,cb) => {deleteMany(Task,{title,status,dueDateLower,dueDateUpper},cb)};
+  Task.remoteMethod(
+    'deleteMany', {
+      http: {path: '/delete-many', verb: 'post'},
+      accepts: [
+        {arg: 'title', type: 'string'},
+        {arg: 'status', type: 'string'},
+        {arg: 'dueDateLower', type: 'date'},
+        {arg: 'dueDateUpper', type: 'date'},
+      ],
+      returns: {arg: 'count', type: 'number'}
+    }
+  );
 };
-/*
-658da13259a20f3478ba4ba8
-659042db9ce22b91c98bb270
-*/
