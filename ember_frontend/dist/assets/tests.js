@@ -58,9 +58,9 @@ define("task-manager/tests/integration/components/status-dropdown-test", ["qunit
         <StatusDropdown />
       */
       {
-        "id": "mgs/nozp",
+        "id": "1VYfM/xN",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"status-dropdown\"]]",
-        "moduleName": "/Users/tanyikai/Documents/programming/js_tutorial/ember/task-manager/task-manager/tests/integration/components/status-dropdown-test.js",
+        "moduleName": "/Users/tanyikai/Documents/programming/js_tutorial/nodejs_tut/loopb/TaskManager/ember_frontend/task-manager/tests/integration/components/status-dropdown-test.js",
         "isStrictMode": false
       }));
       assert.dom().hasText('');
@@ -75,9 +75,9 @@ define("task-manager/tests/integration/components/status-dropdown-test", ["qunit
           
       */
       {
-        "id": "Qv8YBQTm",
+        "id": "03zZ9xCX",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"status-dropdown\"]]",
-        "moduleName": "/Users/tanyikai/Documents/programming/js_tutorial/ember/task-manager/task-manager/tests/integration/components/status-dropdown-test.js",
+        "moduleName": "/Users/tanyikai/Documents/programming/js_tutorial/nodejs_tut/loopb/TaskManager/ember_frontend/task-manager/tests/integration/components/status-dropdown-test.js",
         "isStrictMode": false
       }));
       assert.dom().hasText('template block text');

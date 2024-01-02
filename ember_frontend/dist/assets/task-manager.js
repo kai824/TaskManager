@@ -1128,7 +1128,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("task-manager/app")["default"].create({"name":"task-manager","version":"0.0.0+4cc7ae60"});
+            require("task-manager/app")["default"].create({"name":"task-manager","version":"0.0.0+3bd42b84"});
           }
         
 //# sourceMappingURL=task-manager.map
