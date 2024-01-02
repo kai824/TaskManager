@@ -1,0 +1,59 @@
+{{#if @model.error}}
+<p>Error: {{@model.error.message}}</p>
+{{else}}
+
+<h1>Search results</h1>
+
+{{#if @model.params.message}}
+  <p>{{@model.params.message}}</p>
+{{/if}}
+
+<LinkTo @route="createNew">New Task</LinkTo>
+
+<form>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Due Date</th>
+    </tr>
+    <tr>
+      <td><input type="text" name="title" value="{{@model.params.title}}"/></td>
+      <td></td>
+      <td>
+        <StatusDropdown @default={{@model.params.status}} @optional=true/>
+      </td>
+      <td>
+        <input type="date" name="dueDateLower" value="{{@model.params.dueDateLower}}"/> to
+        <input type="date" name="dueDateUpper" value="{{@model.params.dueDateUpper}}"/>
+      </td>
+      <td><input type="submit" value="Search"></td>
+    </tr>
+    {{#each @model.matches as |instance|}}
+      <tr>
+        <td>
+          <a href="/task/{{instance.id}}">{{instance.title}}</a>
+        </td>
+        <td>{{instance.description}}</td>
+        <td>{{instance.status}}</td>
+        <td>{{instance.dueDate}}</td>
+      </tr>
+    {{/each}}
+
+    <tr>
+      <td><input type="text" name="new_title"/></td>
+      <td><input type="text" name="new_desc"/></td>
+      <td>
+        <StatusDropdown @name="new_status"/>
+      </td>
+      <td>
+        <input type="date" name="new_dueDate"/>
+      </td>
+      <td><input type="submit" value="Update"></td>
+    </tr>
+  </table>
+  <button type="submit" formaction="/deleteMany">Delete all</button>
+</form>
+
+{{/if}}

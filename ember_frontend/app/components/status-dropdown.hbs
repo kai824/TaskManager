@@ -1,0 +1,7 @@
+<select name="{{if @name @name "status"}}" required={{@required}}>
+  <option value="" disabled={{not @optional}} selected={{if @default "false" "true"}}></option>
+  <option value="todo" selected={{eq "todo" @default}}>todo</option>
+  <option value="in-progress" selected={{eq "in-progress" @default}}>in-progress</option>
+  <option value="completed" selected={{eq "completed" @default}}>completed</option>
+</select>
+{{yield}}
