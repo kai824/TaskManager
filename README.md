@@ -18,7 +18,7 @@ CRUD functionalities implemented:
 * Delete a specific task
 * Mass delete many tasks by filtering criterion
 
-#Set-up instructions
+# Set-up instructions
 ## MongoDB
 All relevant database files have been added in the mongoDB folder. Simply run the command `mongod --dbpath [path to mongoDB folder] --auth`. This must be run first, for the loopback backend server to run.
 
